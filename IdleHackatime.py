@@ -56,6 +56,116 @@ PYTHON_EXTENSIONS = (".py", ".pyw", ".pyi")
 
 log = logging.getLogger("idle-hackatime")
 
+# Monochrome Hackatime logo, keyed by (colour, pixel size).
+LOGO_PNG = {
+    ("black", 16): (
+        "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAABI0lEQVQoz13RzyvfcRwH8MfH"
+        "x1I76KulpdUO0tQKff2ItJxx2mFOysEkJ/kDxEH5A4ja0VlOttqBlvxIuThshzWH5UiEEha9"
+        "dvi8fYvXq1evev189nxSWFWKTt14IZN5ZiXVmLf2tJynXFbSYcpHbRpdufDaZdHK0Kxs1oWo"
+        "+DcdWpFVyVBjSYN/wn262KNXyETx5KtVjWn3wB9hzJzNBNwb4bMm4digbj+F3LLwrpgoY8SR"
+        "dT/kWvw1oM44PlCNl+izaEarMw8WXNmTo1QA6hTuhfAdtU6FcCcMPbLxS7gW9sGKcCNcq6d4"
+        "0i88CLtemdQu3ArTqSvHhBB2vBe6bAhfEokVwntsOXEonNs2WmH5iSZvDfutN+n7TM88DX3y"
+        "iAz8B7/uWWzs4mOKAAAAAElFTkSuQmCC"
+    ),
+    ("black", 20): (
+        "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAQAAAAngNWGAAABlklEQVQoz23SMWsUURQF4G8m"
+        "owY0JGFNsaCCYMQgBBQFsYiIpghoI9gZtU1Au2CnW1kJdlEw2PgTgiKJIKZQBFOJKLETDYiS"
+        "TbFFNu7OtZjZdZGc4j0e97x7OOde/iGVSHHUKFI7IumSeeIVUplU0qmkJS1kzjgmjBhxxEm5"
+        "llyIbhMJhl0x7rzPGkJoe2/GuAlDPXr2uKDqvnpJagkhLDnkqgz6kGgZsyCz6bC2kKGFqp+W"
+        "DatLOm2/+oDvQktoqsuFWTWr9hXiGa4JEwa0hfDanEdCGDYpzCArxBeFafwQ7up3ykPhaVl5"
+        "27GTWSufl4Vpd9z2wAucFsKGSuG53zchzEucdcmUKRdxzroQthzspLgq/BHqfrkBXtoUpbXf"
+        "hkj1YQWhbdB+VfDRoG05+GRTWgxxTMjltoUadhstI28K1wvXxVETmprCPYklLAsNYaV3hAkW"
+        "hFyYUxVuOiCELyq9K1f8uGVDeGNe2LIoPLO3HHPPPqaomPXcmoZ3HjvB/7QCWXnvsu54SUrs"
+        "iEQmw6SBMrgu/gIFhpUDOW/fugAAAABJRU5ErkJggg=="
+    ),
+    ("black", 24): (
+        "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAACDElEQVQ4y33TTYjNYRQG8N/9"
+        "3zszJc2UcGMmxILGYEIZ+UqkmIWyEgtKSk3yUXY2srJU7BRJyEcp0iTZSNkMGybMRs1GjZHv"
+        "Mffjfyzuf+69Pp9389Y5z/s+55zn8CtySFA0I7v9B0lGacVNj7VJ/qQkTbdUq3lCCSyQk0oV"
+        "fs3L16WEpbb4ZJFeh+xQtM57477Jm25SrqG59vomMw0ruGNhk4Jx1wwKnzyRSBuyllun3RkT"
+        "QllZKlRUhHBPm326G8JyKNrtsWFnharITipVUnEK22qZSUYouWyFZWaRUVLkVLQ4ptNdH+sF"
+        "yOOCsAEjQlkIL53zWQhzdQnXp1qUYI4vQi9eCeGp9VY7Zky4j/1C1RIktdFsNB3deIjX9nir"
+        "x0szcRIHkNheI8BicBjHjapaYUCHHq/0e2aX9UpYjmyObZjU57wB8+z03bCvvusW+l3Myu1A"
+        "1ChHhLKqMOq2B2aB0x55LoSqinAJhYLAEBKJqi5dKBrDuM1IkajgRbOh32TdryoLK8FsH4Q0"
+        "G2FYOjXrAg4Kk/XQWqzC1WwqJeFOk1XlMCj8yP5ZI/FOUZ9QVRImzG82eYJphoSySWGlbuEW"
+        "bmSu2lLvaNNetLiShfsNCOGAa8KINb+nN1Zpq/sm6m4No05o+1t6rZIaqdMOR004Z1Hmz7x/"
+        "Il8PjtqLvMKUqf+NRAt6tTc2oIGfxCDH89IByhkAAAAASUVORK5CYII="
+    ),
+    ("black", 32): (
+        "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAADGklEQVRIx5XVW4hVZRQH8N++"
+        "qGGOiUPJFE6oFJYZRmlZGYigEIo+iBK9ZCRkvShEFykDiSISsttLD2VQUUEgVNjlpZAeCiwT"
+        "yqACL0lJTGri6Mycs1cP5zt7zhlH0LUf9t583/qvtf7r/62vcGHL0CNUMpdkWXIoscNryC/F"
+        "ubU5V2CBYeGBBHYRVoB+vel/kvedNjetFTK5ojufouu7qd86M01B6TbbrVZ40DF/GhQIIeTi"
+        "/Og57rTBvcgccCJtbj2n7bHaZMusd/OYwLX73Ta5yUybfS6EhqZKpamZYP6ySq8t7hoLkWGa"
+        "rVjkOUeFhqorg0rDsPChq83wtOnJK+FkuNxk/R72iJdNdY2ou1/JEn0N8w343u8WO6joZGIC"
+        "NghhoxldsUOkEiphm8PWmuf2bnXk6POv8AQeEkY6WDhYu4eplgnnzOkGKPGq8LcePJsAWnHP"
+        "eMouoSHsBd8K77XLz5FpmG49TmnUyCH3mVVuNOAoKryBee7AetdptnMosFYIA3qxUjgrvC3H"
+        "Zr1+EcLPSjwpDAqPjQq8xEvJaSVy+4RTrrTaOtvdY60w5FZMckgYFna3QucI9KdmbkPlfidM"
+        "tdR8sx2xyBqHLLQPW12rocAsNEeZvAylhoVex6+usslxTQMmOu4VsxzABtvqxKeYgKx9TE8h"
+        "lCqPWuBd+531nxfMdNRcS/S43jpLqQU2rNnZxGc6et+Wz4uprFs6BFXVe75p9avNwbd1+wpN"
+        "DcMYRCn3o+8wpClP0QM/jAJU2OuQXJUgSjmmIRT4IA2UzsP3aQKqi3hcGKqTHRHerAnrc6YW"
+        "c6uAn7qnQYYJ/qh5aL3fAjvNwcdj1tYYMycLLO4gcUTYhWnCTqyoz8Y54Z3xZlKJ+0TS2Yjw"
+        "EZYLDTfgS2HEsLBX1h4n50OsMSQ0nBO+wvMitWxFKuATpQveFCVm+yJt/c0SX6eM9vhHOGlL"
+        "XbALQ7DcbifHTKXDtuszevV08N9tbWXMsMBcfTY6YoeD9qvSebkIGxVNZtCxOrtxKh//zmum"
+        "VEtDdhvERCMXF7vbMlyhZ/ymtex/KwFiHbOuDN4AAAAASUVORK5CYII="
+    ),
+    ("white", 16): (
+        "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAABLUlEQVQoz02PvSuFARyFn/d9"
+        "r5TBR6IkBolS1PWRm2R2jWJSBiST0SQG/wFRRmVQRpSBJB+R5Q4MYsBIJCVf130M9xVn+Q3n"
+        "OZ3zCwSAkBwhOdqJOKWALGDeyCtHKSHQzxTwhcTJIL5JpIY0vVSyxioZSrgFwEBsNOmsz/5p"
+        "yzZbxCAkAApZpIpPJBtXpuhCAsRI3HTdujh75pU65py7YohYrY5ar97ZZ6fnauSS2iAhkASG"
+        "uWaDPSKauSFNGeNANySAIqCHBWZo4ZFv5nnhmAgoBcR2Navqtljsg6of6qAg4oX6qp6IuKK+"
+        "qa9WCCbEXvVbPbLcSVvVd3VaTPw+OqHqoU1qhzvqshj8VkRiyn3vzahPHjgi/4E8grUOeWmX"
+        "iKGB/AEYxdCAmF+GyA+lWAN/SbbaEAAAAABJRU5ErkJggg=="
+    ),
+    ("white", 20): (
+        "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAQAAAAngNWGAAABtklEQVQoz1WSv2sUURSFv/d2"
+        "TAIakrCmWNDYiApCQEGQFBHRFAvaiGJj0DYB0wXLpLKyjhIVC/8EfyBRCKZQAgYLESXpRIKg"
+        "ZANusasz81nMjK7nFq94h3vP4ZwgfxGRQM4RZItITi8sJpRvFO/7SowmRkP1EwEISMJpjiGj"
+        "jHKYk+Sk5IiEamMQR7zkuGf9ZFvVzHVnHHfS4YJRHOz3nA1v2ypJqQVWHPOKSXU60KWfpxzl"
+        "PZCRUwNScia4zDpjhbhC7JbvxK9qqnZtmauzLrrhPjFgIl5TJx00U3XVee+qOuKUOiMmEYGr"
+        "wCF+8g1YoMkqHeARLeaAaSBDTNxU34gX1WlvOecdn4unVN2xXrge8IuqSwYnvGDTpufFM26r"
+        "2vGgFGY21N9qy+9eF/GFu1pa++GwRGrAGiAZQ+ynAcAHhvhVpv2RXWIR/TKQEEmBAaCPZaCP"
+        "SAY8LAtjIi6qXbvqgsEV8aXaVtd6IwziAzVX522oNzyg6mfrRad6S3bTHfW1S2rHJ+pj94o1"
+        "saePUaw76zM3bfvWe56QivaPWGlF3OO2x0tSVej/iBhMTMQpB43VrmL+AB4Yqsh1NPTKAAAA"
+        "AElFTkSuQmCC"
+    ),
+    ("white", 24): (
+        "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAACQklEQVQ4y3WTXWiOcRjGf8//"
+        "fbeV1hwwCwtxQNvMQlG+8pFiB8qROKB2uMSUMydyJKUUZ4qkyEcRaUlKS+1klGwNJ2onsrYw"
+        "bbzv+zw/B8//3buR+z577ut6/vd1X/edyLxIkEBGC2UmCWT8HdYyiJhYL953wAZD/DYnwywz"
+        "kFHPCqQEwCoSMjKKsVptwVor7XTxjkYWsYcjNPOKywwySYEFTJFgjRDI2MViRijyiNVzOp7g"
+        "Dv3Id15HRbH3TrfZ5EVn1LJlM7ViRdWnNnjcthyZy8QWjzjgiFfU1GpkZpaseF7cnyMDkAAl"
+        "brGB9TQDkiIZkFChjj6W84RvESkWxOvqDvGTWlZ12Kv+UHWZrerdHJkrWOqU2iWOqjrodjfb"
+        "57j6TDyhpq4TQyAAO2kE2oAXwAeO8pkOhlkMnAN6gMABIOSGrAXgJHCGMVI20MtCOhilmzcc"
+        "ZjsloBOIPjYAv9nKNXpZwSGmGeEn07Qh3dyIchfmkoviKbVsqo750Oc2i3jBl75VNbWi3hSL"
+        "RQSGgEAgpZVWoIVxYILdQAYEKsD7fFsTMfgxGpZaVjeKuMRJNYsWans+JSmScQmoAIFC1LSJ"
+        "r/QDKVAm4THDFMiwuhz96q/4zhaDX2xxq5paUmdcWdul3LwFDqllf6sbbVMfiPfiVu2N45m9"
+        "uIJY5+1Y7rZX1R7vqJ/cUoU750QLIu7zmTPWYsyzNtTgzrvpJJKWe9DTznjVNSZzfvYPIS9V"
+        "i2MeEwsWI+k/hHwEdWKXTXF+8/IPuIUb2jbkvPMAAAAASUVORK5CYII="
+    ),
+    ("white", 32): (
+        "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAADZElEQVRIx4WVX2hWdRjHP+fP"
+        "XFDa2KqxYoaOambBIrSsDCTYbpQGDSW6SchAKlAISqkVEkXkhUVRV2VQkkEglP2ToFheeLGy"
+        "QS2IYipUI6au5dz2vud8unh/591551bP7+Kcw/k9f77Pn+8TyZISIcuZoULEktciF1MEgZQq"
+        "+2nmCWLyJd3YeCJjEWMTscc59WExlcVP42ci4krbwnezh5yyO/xLjIxNgotwyhASMlbSxyy/"
+        "8xtTrOFR+omp8DhHOVsKuwRp3kBMzl3cxDifEvEDnbSUVP7hW97iGBu4ilFGSMgacxCL97jT"
+        "W+x0l5+rWjUzNzczsyZ/uMU2d3t3HS5F6rDFveJ6X/CMWjW3LLlV59TDXmu7z9gatEoG2uy3"
+        "10Pq8w5r3Wv5raLusdUuHyhiKCA0idtV3WG7CyULUeigpxxwrXcE2MxnoMOz6lPiI8FXkYXR"
+        "urqu8D51xq5GA6n4mvqny8XngoGa3wvu8aBaVYdEPK6+X0CIgYgqrWwDJqkCcShPzFG2cDMT"
+        "nAFy4A1gLXcC27iBjLhWxkQcUHXCNnGzelF9x1jcZZs/qfqjqfi0Oq0+WYu8APBKUNosxg6r"
+        "k17t/W51n/c6oM56u9jsmDqnHqm5jsPkrQxTOAjkPMQ5VrCJW1nNadbTzxjrGAb2cj1VEmAV"
+        "kBV44bIwvut4HfiZa9jJOBkTLGOcV1nFCLCdQSAF4AqagCgNBiYBScl5jB7e4yQX+ZuX6OQM"
+        "3WxkOTeylU2ARADMhWkIOXi2VPtCXg49elupofL6nW9qnVDk4Hi9fAkZVeaAaSAl5ntOALNk"
+        "xMG7wHc1jThUeIix+pQnpMRACyAJ8AGQkDSQ3ic1Q3HAXuFNoNrAdpcDUAEOM01aJ9aMhBG+"
+        "qlVhfhqb/LWeh9rzbREP2CV+tOBff8GTZTbcUEpiRT0otqgHxL76bMyo7y4klKIWD2ros4r6"
+        "odirVl0jfqlWnFOHjAo6aWTlVOx3Vq06ox4TX9RQsr4A4GPTYpQvpfVUXO0X4eovbvTrENFn"
+        "/qWed3eJ/hcxUCyQXo94fgErnXKfHaXVs8heKOi91hnt9NBNBzs4zX5GOUke5uV/dyMkocYQ"
+        "cYFzXAdASn7pjkwX0ycDImJSZjnCNLCMykLf/xXBfMvKleRMLb3g/wVoqZGHWt4mIwAAAABJ"
+        "RU5ErkJggg=="
+    ),
+}
+
 
 def read_config():
     parser = configparser.ConfigParser(interpolation=None)
@@ -283,7 +393,7 @@ class HeartbeatSender:
             )
         except Exception:
             log.exception("Could not set up wakatime-cli")
-            self.today_text = "Hackatime: wakatime-cli unavailable"
+            self.today_text = "wakatime-cli unavailable"
             return
         self._refresh_today()
         while True:
@@ -323,7 +433,7 @@ class HeartbeatSender:
     def _refresh_today(self):
         self._last_today_fetch = time.time()
         if not api_key():
-            self.today_text = "Hackatime: set API key in Options"
+            self.today_text = "set API key in Options"
             return
         try:
             result = subprocess.run(
@@ -336,7 +446,7 @@ class HeartbeatSender:
             return
         text = result.stdout.decode("utf-8", "replace").strip()
         if result.returncode == 0 and text:
-            self.today_text = "Hackatime: " + text
+            self.today_text = text
 
 
 class ActivityTracker:
@@ -390,6 +500,26 @@ except ImportError:  # Running the installer without idlelib.
     Delegator = object
 
 
+def logo_image(label):
+    """Return the logo sized to the label's font and coloured like its text."""
+    from tkinter import PhotoImage, TclError, font
+    from tkinter.ttk import Style
+
+    style = Style(label)
+    spec = label.cget("font") or style.lookup("TLabel", "font") or "TkDefaultFont"
+    linespace = font.Font(root=label, font=spec).metrics("linespace")
+    sizes = sorted({size for _, size in LOGO_PNG})
+    size = max([s for s in sizes if s <= linespace] or sizes[:1])
+
+    foreground = str(label.cget("foreground")) or style.lookup("TLabel", "foreground") or "black"
+    red, green, blue = label.winfo_rgb(foreground)
+    colour = "white" if (0.299 * red + 0.587 * green + 0.114 * blue) / 65535 > 0.5 else "black"
+    try:
+        return PhotoImage(master=label, data=LOGO_PNG[colour, size], format="png")
+    except TclError:
+        return None
+
+
 class _ChangeFilter(Delegator):
     """Percolator filter that observes every insert and delete in the text."""
 
@@ -429,6 +559,7 @@ class IdleHackatime:
         self.tracker = tracker()
         self._activity_job = None
         self._status_job = None
+        self._logo = self._add_status_label()
 
         self.filter = _ChangeFilter(self)
         editwin.per.insertfilter(self.filter)
@@ -523,10 +654,19 @@ class IdleHackatime:
         _prompted_for_key = True
         self.api_key_event()
 
+    def _add_status_label(self):
+        self.editwin.status_bar.set_label("hackatime")
+        label = self.editwin.status_bar.labels["hackatime"]
+        logo = logo_image(label)
+        if logo is not None:
+            label.configure(image=logo, compound="left")
+        return logo
+
     def _refresh_status(self):
-        status_bar = getattr(self.editwin, "status_bar", None)
-        if status_bar is not None and self.tracker.sender.today_text:
-            status_bar.set_label("hackatime", self.tracker.sender.today_text)
+        text = self.tracker.sender.today_text
+        if text:
+            prefix = " " if self._logo is not None else "Hackatime: "
+            self.editwin.status_bar.set_label("hackatime", prefix + text)
         self._status_job = self.text.after(STATUS_REFRESH_MS, self._refresh_status)
 
     def close(self):
