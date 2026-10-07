@@ -655,6 +655,60 @@ def retina_logo(label, colour, size):
     return name
 
 
+def ask_api_key(parent, initial):
+    """Modal prompt for the API key; returns the stripped key, or None if cancelled.
+
+    simpledialog.askstring fails on Tk 9.1 with Python 3.14 and older, which still
+    call the removed ::tk::unsupported::MacWindowStyle command.
+    """
+    import tkinter as tk
+    from tkinter import ttk
+
+    result = []
+    top = tk.Toplevel(parent)
+    top.title("Hackatime API Key")
+    top.transient(parent)
+    top.resizable(False, False)
+
+    frame = ttk.Frame(top, padding=12)
+    frame.pack(fill="both", expand=True)
+    ttk.Label(
+        frame,
+        text="Paste your Hackatime API key.\nFind it at {}/my/settings".format(dashboard_url()),
+    ).pack(anchor="w")
+    value = tk.StringVar(top, initial)
+    entry = ttk.Entry(frame, textvariable=value, width=40)
+    entry.pack(fill="x", pady=(8, 12))
+
+    def ok(event=None):
+        if value.get().strip():
+            result.append(value.get().strip())
+        top.destroy()
+
+    def cancel(event=None):
+        top.destroy()
+
+    buttons = ttk.Frame(frame)
+    buttons.pack(anchor="e")
+    ttk.Button(buttons, text="OK", command=ok, default="active").pack(side="right")
+    ttk.Button(buttons, text="Cancel", command=cancel).pack(side="right", padx=(0, 6))
+    top.bind("<Return>", ok)
+    top.bind("<KP_Enter>", ok)
+    top.bind("<Escape>", cancel)
+    top.protocol("WM_DELETE_WINDOW", cancel)
+
+    top.update_idletasks()
+    x = parent.winfo_rootx() + (parent.winfo_width() - top.winfo_reqwidth()) // 2
+    y = parent.winfo_rooty() + (parent.winfo_height() - top.winfo_reqheight()) // 3
+    top.geometry("+{}+{}".format(max(x, 0), max(y, 0)))
+    entry.focus_set()
+    entry.select_range(0, "end")
+    top.wait_visibility()
+    top.grab_set()
+    top.wait_window()
+    return result[0] if result else None
+
+
 class _ChangeFilter(Delegator):
     """Percolator filter that observes every insert and delete in the text."""
 
@@ -764,17 +818,9 @@ class IdleHackatime:
         self._heartbeat(os.path.realpath(filename), True, lineno, cursorpos)
 
     def api_key_event(self, event=None):
-        from tkinter import simpledialog
-
-        key = simpledialog.askstring(
-            "Hackatime API Key",
-            "Paste your Hackatime API key.\n"
-            "Find it at {}/my/settings".format(dashboard_url()),
-            initialvalue=api_key() or "",
-            parent=self.editwin.top,
-        )
-        if key and key.strip():
-            write_settings(api_key=key.strip(), api_url=api_url())
+        key = ask_api_key(self.editwin.top, api_key() or "")
+        if key:
+            write_settings(api_key=key, api_url=api_url())
             self.tracker.sender._last_today_fetch = 0.0
         return "break"
 
