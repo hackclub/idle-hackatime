@@ -659,7 +659,8 @@ class IdleHackatime:
         label = self.editwin.status_bar.labels["hackatime"]
         logo = logo_image(label)
         if logo is not None:
-            label.configure(image=logo, compound="left")
+            # Clear the rounded window corner and the separator above the status bar.
+            label.configure(image=logo, compound="left", padding=(4, 2, 0, 1))
         return logo
 
     def _refresh_status(self):
