@@ -12,6 +12,7 @@ Remove with:
     python3 IdleHackatime.py uninstall
 """
 
+import base64
 import configparser
 import json
 import logging
@@ -109,6 +110,58 @@ LOGO_PNG = {
         "XbALQ7DcbifHTKXDtuszevV08N9tbWXMsMBcfTY6YoeD9qvSebkIGxVNZtCxOrtxKh//zmum"
         "VEtDdhvERCMXF7vbMlyhZ/ymtex/KwFiHbOuDN4AAAAASUVORK5CYII="
     ),
+    ("black", 40): (
+        "iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAAENElEQVRIx6XWWahVVRgH8N/e"
+        "59yc4oqm1yQtDJsjs2wUwQcLsiKIqIyKUHooCoyIBoh6SEuLsiwaXjQKGl5sjnqojKygUJqx"
+        "6UEUm7w06fWes8/+ejj7nLPvcPRCa8He56z9rf/6xv/6GNuooCIZm+DBRo/cHeb7lLFAdhut"
+        "rSnm+kvmZhMPDpl21TuKzQmW6VVxtn1d5MdwxERzJW2X9NooLFZFRbWQSaQj9R2+UJVJXecY"
+        "P9vtPfv0me15hxtvvE2uVCvkcnmhQN5duyrmWucacLRXva5flGa/991iFjjKAhMcILAVnOVh"
+        "HO0uPF2A5Boacrm8WBn0kJvc4AJPmt8NMsXx1kncKbXcNiGTFSCtZy5TL2AP12OSxx0/enBT"
+        "rDELp3nWR8L+IcaWZ25QeMVp+syzthyLDnJgt/EWutG1DrPSONHFOYkeXGKOxb7wo3PESB2b"
+        "Z2wRwg9YK9rGNWfW9mEI/3hJOB3zXDiaH6tYLoSvTMZ2oVECaP6utz36J54UNrlvtKAkmG6P"
+        "8LuZmOnPdihCpia87NsCMhO2gPeEAUd2nNeyvIJbTcVndqNXb9u3uYoe7LDBJlW5wAvgQ4y3"
+        "uhOWVhFlDnUV2FmsN+s4JFJvWqbPLrt9j4aq3zyLxDKEy83RKIelgouLRHkFTPar0JAL14GL"
+        "TXSvUDMo3A/OaKfQrUUUSgF5RBgQtktUsUHYK6zT6zw8Zzl2CmGHCVI8JdTVhXeGJneKd4Wa"
+        "TFgKjrBXCAsc5Xb3W+E2x9gg7HEymKNeFGbY0eLKJmqOvrbnVqFil6UGsMilwnfG6XeFM33k"
+        "BF/rwWOqMokE00zrACZIHaLJcJlTPaOBzU60xmRbXKpf1Xzb3WKR31D3gIs0VIv9Exw6PBO3"
+        "FvnVfL5hnklgNmZYbK5xBW1Ndr7NpbRvUsYQikjxVhuw9d7hY/t8UTr0G/0+93tJplU3/5hZ"
+        "pogq1gyp3U7d/lgQ/yFY3S7DDlxT0x9axqdtpnm/fIKKRK6OTIZcA2+jLqRDqjfHVplKh52a"
+        "bt05jA6iSIgJSIpr/ssRMk27rm4ldkvDqgEb0BhBGb0mIS2+bCw06oxQ9avXhu9NMNWeYRyY"
+        "C3tMASeZjiMNllgohJpw99DC6wRmhVAriefCv2aAL90DXh0WvPCTcUbtKFI8LwwOAfzbDPTZ"
+        "r98ULBmRXgt1ufeaZ3wgDJbuur1mY6kQ1oPNJZoNK0Yzt6xjxZtCXjLrdKwvvHUujpMX/8L1"
+        "DtLBNT+uKgyqy4RT8Enhiq36rDQghF+cfzC4TiKdaXNbwy0e1S/kam3Na54w5UDGDvVlU2yJ"
+        "F/0xyjW/3YOObWfGqIEYzfSQY6oFTnasXotM87ifbLNNDVWNro1AV9COfybaVRRYU7OujeeB"
+        "OtKGhkRFj1SuH/vRI5EdqCccy6jiMm/7X037yDEmsP8ADv8kRJw7ONUAAAAASUVORK5CYII="
+    ),
+    ("black", 48): (
+        "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"
+        "/4ho/p+V/gvgdNTlYxaMeAAAAABJRU5ErkJggg=="
+    ),
     ("white", 16): (
         "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAABLUlEQVQoz02PvSuFARyFn/d9"
         "r5TBR6IkBolS1PWRm2R2jWJSBiST0SQG/wFRRmVQRpSBJB+R5Q4MYsBIJCVf130M9xVn+Q3n"
@@ -163,6 +216,62 @@ LOGO_PNG = {
         "/qWed3eJ/hcxUCyQXo94fgErnXKfHaXVs8heKOi91hnt9NBNBzs4zX5GOUke5uV/dyMkocYQ"
         "cYFzXAdASn7pjkwX0ycDImJSZjnCNLCMykLf/xXBfMvKleRMLb3g/wVoqZGHWt4mIwAAAABJ"
         "RU5ErkJggg=="
+    ),
+    ("white", 40): (
+        "iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAAEkUlEQVRIx42WW6gVZRTHfzOz"
+        "T3pUjmh2TPKCcbQrmZcsC8EHE7IkiKiMClF6KAoKqSiIeqjsRlkZVi8qBV1ezMqiHipD66FQ"
+        "0i5Y2YMolnYOlenx7D0zvx72t2fP2cet5/vYM7Nn1vxnrf9a6/99kQxrJGQk5JzWPB4GWAfw"
+        "IPeSIdFprW03o3COxR7/MfVeR5Xut5kn9zABBKLwW04XCVdwfBgRDflGLOIoe4zERMQuN6qL"
+        "rIiJlWATGQ/1N2phuUJKzApm8DuH+JzjdDOFtzibkYxkM7dQDXY5echC3t7DitjjWm8X8Vy3"
+        "+KF9lkefX3i/k0Wc5jw7iyjCLMMl4uW+IJ7rI+LrASQ3MzM3Nw93Bnzee7zLa1zv7MGQg7k7"
+        "37VGPmzsSnepqWkAaRxzU2sB9mw7HO06zy+YHwL4jJPFOW5yu3rCdiN3QH3fOXY7y2fLxRSX"
+        "yIRDjOQq7uYOzuQ+RrTti4gO4Hqms4jv+Y0FJaSWQt6h6q/is1oEVx9pwaHqUd9V54qzvLbJ"
+        "4+AMr1R1j2PFvWpWAqhf1wpG/xbXq5t94mRJicSz7FWPOEmc5N9FKjS1qr7nTwEyVXeI+Lna"
+        "79RmWhqRJ8BqxgPfcgjooqvgJCehA9jPBjZTCZrzNgBfASN5KrRooTYRKWO4FYAD4X69jyUi"
+        "ZivL6eYgh/gFyKhwmE1AxHJAbmI6WcAqSnpZKJT3RRzrn2pmrq4QcZmjfFytOqCuEfGyooRW"
+        "hyzQTMiLar+618iKuEE9pq61y6vFN10pHlB1v53G4mtqzZr6aYPFZlF/plZN1aUinuMxVec5"
+        "zYdc4yofcIYb1F4vFnG6tdCYur+hlfW4c6C7YO5JIOEgS+kHFnID8jMj6ONm5rOdC/iBDuBl"
+        "KqRERMAEJtQTE4f8xJwBRMSkXMobZMA2LuQZxrKDG+ijwmz2cj8LOQzUeJrryKiE9zsZ09op"
+        "O0N91Y8fOcvRIk4RJ7rIHkcE2RrrEreVyr4uGUEimhx+XAA2zvv92uN+XxK4H+3zO4+UbBp9"
+        "c9RJZQ5jYE8QiHqZZ8gUFtDJaCpAwhnAFsYxlwnkZCSDZOUPjpQLW+CLZrUDCRE5NSAlBXIy"
+        "4BOghsQluHpKd5KSYIPDSOz0QIscGAqiU4xMjMTdQ2zq3X1bo7AbHlboZwOQtegedDEaiMOT"
+        "jcGj8qJU4U8+KN4tqc14e1s0MFd7HSfiRZ4lTnWgpEKqVfXRhn+terhKrZbMc/U/J4q428dE"
+        "3DLoo6m6zxHNRaB1iX9LHRgE+K8TxW5P2Oc4cfGQ8rqqvO4N3c18qQ6U1rpjThGXqvqKiNtK"
+        "MqurmuG2AtZ9TNyq5qWw5oqvBLauFM8zD//0zlMt9BQPnwwB1UzVS8RvAhU77fY++1X9wyWt"
+        "cLbdLM13W+HhDl+yT82tFp5XfdVxg4NtB0gQWFzsO/7l0LHX55xZVMZpdl/N1pMcGM88LmYm"
+        "XSxkAuvYxy52UQUqZCfdCNh+JiV+RnkwNFjds7jdW6fakWZkRCR0EJPTB5wAOohIW9pvmB4O"
+        "7qIb/cTT7rDbc3iyETEM4/8Be4wBbIDzbdAAAAAASUVORK5CYII="
+    ),
+    ("white", 48): (
+        "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"
     ),
 }
 
@@ -509,15 +618,41 @@ def logo_image(label):
     spec = label.cget("font") or style.lookup("TLabel", "font") or "TkDefaultFont"
     linespace = font.Font(root=label, font=spec).metrics("linespace")
     sizes = sorted({size for _, size in LOGO_PNG})
-    size = max([s for s in sizes if s <= linespace] or sizes[:1])
+    size = min(sizes, key=lambda s: abs(s - linespace))
 
     foreground = str(label.cget("foreground")) or style.lookup("TLabel", "foreground") or "black"
     red, green, blue = label.winfo_rgb(foreground)
     colour = "white" if (0.299 * red + 0.587 * green + 0.114 * blue) / 65535 > 0.5 else "black"
+    if "nsimage" in label.tk.splitlist(label.tk.call("image", "types")):
+        try:
+            return retina_logo(label, colour, size)
+        except (OSError, KeyError, TclError) as err:
+            log.info("Retina logo unavailable (%s), using PhotoImage", err)
     try:
         return PhotoImage(master=label, data=LOGO_PNG[colour, size], format="png")
     except TclError:
         return None
+
+
+def retina_logo(label, colour, size):
+    """Draw the 2x PNG at `size` points with Tk 9's macOS nsimage, so it stays sharp on Retina.
+
+    nsimage only reads from a file, so the PNG is written under ~/.wakatime.
+    """
+    name = "hackatime-logo-{}-{}".format(colour, size)
+    if name in label.tk.splitlist(label.tk.call("image", "names")):
+        return name
+    png = base64.b64decode(LOGO_PNG[colour, size * 2])
+    path = os.path.join(RESOURCES_FOLDER, "idle-{}.png".format(name))
+    if not os.path.exists(path) or open(path, "rb").read() != png:
+        os.makedirs(RESOURCES_FOLDER, exist_ok=True)
+        with open(path, "wb") as f:
+            f.write(png)
+    label.tk.call(
+        "image", "create", "nsimage", name,
+        "-source", path, "-as", "file", "-width", size, "-height", size,
+    )
+    return name
 
 
 class _ChangeFilter(Delegator):
@@ -659,14 +794,19 @@ class IdleHackatime:
         label = self.editwin.status_bar.labels["hackatime"]
         logo = logo_image(label)
         if logo is not None:
+            from tkinter.ttk import Style
+
+            Style(label).configure("Hackatime.TLabel", space=2)
             # Clear the rounded window corner and the separator above the status bar.
-            label.configure(image=logo, compound="left", padding=(4, 2, 0, 1))
+            label.configure(
+                image=logo, compound="left", padding=(4, 2, 0, 1), style="Hackatime.TLabel"
+            )
         return logo
 
     def _refresh_status(self):
         text = self.tracker.sender.today_text
         if text:
-            prefix = " " if self._logo is not None else "Hackatime: "
+            prefix = "" if self._logo is not None else "Hackatime: "
             self.editwin.status_bar.set_label("hackatime", prefix + text)
         self._status_job = self.text.after(STATUS_REFRESH_MS, self._refresh_status)
 
