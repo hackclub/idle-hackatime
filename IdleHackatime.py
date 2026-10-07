@@ -57,11 +57,6 @@ PYTHON_EXTENSIONS = (".py", ".pyw", ".pyi")
 log = logging.getLogger("idle-hackatime")
 
 
-# --------------------------------------------------------------------------
-# Configuration
-# --------------------------------------------------------------------------
-
-
 def read_config():
     parser = configparser.ConfigParser(interpolation=None)
     try:
@@ -124,11 +119,6 @@ def configure_logging():
     log.propagate = False
 
 
-# --------------------------------------------------------------------------
-# wakatime-cli
-# --------------------------------------------------------------------------
-
-
 def cli_os():
     return platform.system().lower()
 
@@ -176,7 +166,7 @@ def download(url, destination):
             with open(destination, "wb") as f:
                 shutil.copyfileobj(resp, f)
         return
-    except Exception as err:  # noqa: BLE001 - any failure falls back to curl
+    except Exception as err:
         log.info("urllib download failed (%s), trying curl", err)
     curl = shutil.which("curl")
     if not curl:
@@ -189,7 +179,6 @@ def download(url, destination):
 
 
 def install_cli():
-    """Download wakatime-cli into ~/.wakatime and return its path."""
     os.makedirs(RESOURCES_FOLDER, exist_ok=True)
     url = CLI_DOWNLOAD_URL.format(os=cli_os(), arch=cli_arch())
     binary = cli_binary_path()
@@ -233,17 +222,11 @@ def cli_supports(cli, flag):
     return flag.encode() in result.stdout
 
 
-# --------------------------------------------------------------------------
-# Heartbeats
-# --------------------------------------------------------------------------
-
-
 def user_agent():
     return "idle/{} idle-hackatime/{}".format(platform.python_version(), __version__)
 
 
 def heartbeat_args(heartbeat, supports_line_changes):
-    """Build wakatime-cli arguments for one heartbeat dict."""
     entity = heartbeat["entity"]
     args = [
         "--entity", entity,
@@ -298,7 +281,7 @@ class HeartbeatSender:
                 self._cli,
                 self._supports_line_changes,
             )
-        except Exception:  # noqa: BLE001 - log and keep IDLE usable
+        except Exception:
             log.exception("Could not set up wakatime-cli")
             self.today_text = "Hackatime: wakatime-cli unavailable"
             return
@@ -357,8 +340,6 @@ class HeartbeatSender:
 
 
 class ActivityTracker:
-    """Decides when activity becomes a heartbeat, shared by all windows."""
-
     def __init__(self, sender):
         self.sender = sender
         self.last_entity = None
@@ -403,10 +384,6 @@ def tracker():
     return _tracker
 
 
-# --------------------------------------------------------------------------
-# IDLE extension
-# --------------------------------------------------------------------------
-
 try:
     from idlelib.delegator import Delegator
 except ImportError:  # Running the installer without idlelib.
@@ -450,7 +427,7 @@ class IdleHackatime:
         self.editwin = editwin
         self.text = editwin.text
         self.tracker = tracker()
-        self._activity_pending = False
+        self._activity_job = None
         self._status_job = None
 
         self.filter = _ChangeFilter(self)
@@ -479,8 +456,6 @@ class IdleHackatime:
         if not api_key():
             self.text.after(500, self._prompt_for_missing_key)
 
-    # Editor state ------------------------------------------------------
-
     def filename(self):
         name = self.editwin.io.filename if self.editwin.io else None
         return os.path.realpath(name) if name else None
@@ -497,8 +472,6 @@ class IdleHackatime:
             lineno, cursorpos = self.cursor()
         self.tracker.handle(entity, lineno, cursorpos, self.line_count(), is_write)
 
-    # Events --------------------------------------------------------------
-
     def on_text_change(self, line_delta):
         entity = self.filename()
         if not entity:
@@ -512,13 +485,11 @@ class IdleHackatime:
 
     def _schedule_activity(self):
         # Coalesce bursts of events and read the cursor once Tk has settled.
-        if self._activity_pending:
-            return
-        self._activity_pending = True
-        self.text.after_idle(self._flush_activity)
+        if self._activity_job is None:
+            self._activity_job = self.text.after_idle(self._flush_activity)
 
     def _flush_activity(self):
-        self._activity_pending = False
+        self._activity_job = None
         entity = self.filename()
         if entity:
             self._heartbeat(entity, is_write=False)
@@ -559,21 +530,15 @@ class IdleHackatime:
         self._status_job = self.text.after(STATUS_REFRESH_MS, self._refresh_status)
 
     def close(self):
-        if self._status_job is not None:
-            try:
-                self.text.after_cancel(self._status_job)
-            except Exception:  # noqa: BLE001 - window already destroyed
-                pass
+        # IDLE calls this before destroying the window, so the jobs can still be cancelled.
+        for job in (self._activity_job, self._status_job):
+            if job is not None:
+                self.text.after_cancel(job)
         if self.editwin.per is not None:
             self.editwin.per.removefilter(self.filter)
 
 
 _prompted_for_key = False
-
-
-# --------------------------------------------------------------------------
-# Installer
-# --------------------------------------------------------------------------
 
 
 def install_dir():
